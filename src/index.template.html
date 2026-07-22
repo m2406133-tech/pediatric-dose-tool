@@ -1,0 +1,162 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>소아과 계산기</title>
+  <style>
+__INLINE_CSS__
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="title-wrap">
+      <div class="title-row">
+        <h1>소아과 계산기</h1>
+        <div class="top-modes">
+          <button class="tab active" data-mode="mode1" title="용량으로 몸무게추정">모드1</button>
+          <button class="tab" data-mode="mode2" title="몸무게/나이 기준 약 용량 계산">모드2</button>
+          <button class="tab" data-mode="mode3" title="처방 입력값 감사">모드3</button>
+        </div>
+        <div id="modeHelp" class="mode-help"></div>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="btn-reset-checks" class="primary">체크 해제</button>
+      <button id="btn-reset-inputs">입력값 초기화</button>
+      <button id="btn-reset-mode">현재 모드 초기화</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="mode1" class="mode active panel">
+      <h2>모드1 (용량 입력 → 몸무게 추정)</h2>
+      <div class="mode1-grid">
+        <div>
+          <table class="dense" id="mode1Table">
+            <thead>
+              <tr>
+                <th style="width:28px">✓</th>
+                <th style="width:190px">약품명</th>
+                <th style="width:98px">용량 입력</th>
+                <th style="width:58px">단위</th>
+                <th style="width:96px">횟수</th>
+                <th>약품별 추정 몸무게 범위</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div id="mode1Warnings" class="warn-box"></div>
+        </div>
+
+        <aside class="sticky-final">
+          <div class="final-box">
+            <div class="final-title">최종 몸무게 범위</div>
+            <div id="mode1Final" class="final-value state-warn">약품선택후 용량입력</div>
+            <div class="mini">선택 약품의 공통 겹침 범위를 표시합니다.</div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="mode2" class="mode panel">
+      <h2>모드2 (몸무게/나이 입력 → 용량 계산)</h2>
+      <div id="mode2StickyInput" class="sticky-input-area">
+        <div class="inline-row merged-top-row">
+          <div class="field mode2-input-box mode2-input-weight mode2-fixed120">
+            <label>몸무게 (kg)</label>
+            <input id="mode2Weight" type="number" min="0" step="0.1" placeholder="예:15.5" />
+          </div>
+          <div class="field mode2-input-box mode2-input-age mode2-fixed120">
+            <label>생년월일</label>
+            <input id="mode2BirthYymmdd" type="text" placeholder="예:190202" />
+          </div>
+          <div class="field mode2-input-box mode2-input-age mode2-fixed120 mode2-age-direct-box">
+            <label>나이 입력 (세)</label>
+            <input id="mode2AgeDirect" type="number" min="0" step="0.1" placeholder="예: 7" />
+          </div>
+          <div class="field mode2-input-box mode2-input-age mode2-fixed110">
+            <label>계산 나이 (세)</label>
+            <div id="mode2AgeValue" class="age-value">-</div>
+          </div>
+        </div>
+      </div>
+
+      <table class="dense" id="mode2Table">
+        <thead>
+          <tr>
+            <th style="width:56px">✓</th>
+            <th style="width:132px">약품명</th>
+            <th>계산 결과</th>
+            <th style="width:56px">✓</th>
+            <th style="width:132px">약품명</th>
+            <th>계산 결과</th>
+            <th style="width:56px">✓</th>
+            <th style="width:132px">약품명</th>
+            <th>계산 결과</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div id="mode2Warnings" class="warn-box"></div>
+    </section>
+
+    <section id="mode3" class="mode panel">
+      <h2>모드3 (처방 입력 → 감사)</h2>
+      <div id="mode3StickyInput" class="sticky-input-area">
+        <div class="inline-row merged-top-row">
+          <div class="field mode2-input-box mode2-input-weight mode2-fixed120">
+            <label>몸무게 (kg)</label>
+            <input id="mode3Weight" type="number" min="0" step="0.1" placeholder="예:15.5" />
+          </div>
+          <div class="field mode2-input-box mode2-input-age mode2-fixed120">
+            <label>생년월일</label>
+            <input id="mode3BirthYymmdd" type="text" placeholder="예:190202" />
+          </div>
+          <div class="field mode2-input-box mode2-input-age mode2-fixed120 mode2-age-direct-box">
+            <label>나이 입력 (세)</label>
+            <input id="mode3AgeDirect" type="number" min="0" step="0.1" placeholder="예: 7" />
+          </div>
+          <div class="field mode2-input-box mode2-input-age mode2-fixed110">
+            <label>계산 나이 (세)</label>
+            <div id="mode3AgeValue" class="age-value">-</div>
+          </div>
+        </div>
+      </div>
+
+      <table class="dense" id="mode3Table">
+        <thead>
+          <tr>
+            <th style="width:56px">✓</th>
+            <th style="width:180px">약품명</th>
+            <th style="width:132px">용량 입력</th>
+            <th style="width:120px">회/일</th>
+            <th>감사 결과</th>
+            <th style="width:56px">✓</th>
+            <th style="width:180px">약품명</th>
+            <th style="width:132px">용량 입력</th>
+            <th style="width:120px">회/일</th>
+            <th>감사 결과</th>
+            <th style="width:56px">✓</th>
+            <th style="width:180px">약품명</th>
+            <th style="width:132px">용량 입력</th>
+            <th style="width:120px">회/일</th>
+            <th>감사 결과</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div id="mode3Warnings" class="warn-box"></div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <div>본 도구는 내부 검토 보조용이며 최종 전문적 판단은 약사에게 있습니다.</div>
+    <div class="build-meta">만든이: 나현진 약사 | 만든 날짜: __BUILD_DATE__</div>
+  </footer>
+
+  <script>
+__INLINE_JS__
+  </script>
+</body>
+</html>
