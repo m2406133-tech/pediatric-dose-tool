@@ -32,7 +32,8 @@ const MODE1_RULES = [
   { name: "어린이부루펜시럽", unit: "ml", freq: "tid", dur: "", type: "range", min: d=>d/0.5, max: d=>d/0.25 },
   { name: "맥시부펜시럽", unit: "ml", freq: "tid", dur: "", type: "range", min: d=>d/0.58, max: d=>d/0.42 },
   { name: "세토펜정325", unit: "정", freq: "tid", dur: "", type: "range", min: d=>(d*325)/32/0.47, max: d=>(d*325)/32/0.31 },
-  { name: "세토펜현탁액", unit: "ml", freq: "tid", dur: "", type: "range", min: d=>d/0.47, max: d=>d/0.31 }
+  { name: "세토펜현탁액", unit: "ml", freq: "tid", dur: "", type: "range", min: d=>d/0.47, max: d=>d/0.31 },
+  { name: "보령메이액트세립", unit: "g", freq: "tid", dur: "", type: "range", min: d=>d/0.06, max: d=>d/0.03 }
 ].sort((a,b)=>collator.compare(a.name,b.name));
 
 const HEALTH_KR_DIRECT_URLS = {
@@ -703,6 +704,11 @@ function calcMode1(rule, dose, period = "") {
     }
     const min = dose / 0.25;
     return { status:"ok", text:`${round1(min)} kg 이상`, range:[min,Infinity] };
+  }
+
+  if (rule.name === "보령메이액트세립" && dose >= 2) {
+    const min = 2 / 0.06;
+    return { status:"ok", text:`${round1(min)} kg 이상 (1회 최대 2g 상한 도달, 상한 초과)`, range:[min,Infinity] };
   }
 
   if (rule.type === "range") {
