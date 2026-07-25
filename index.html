@@ -1447,7 +1447,7 @@ const MODE2_RULES = [
     name:"셉트린정",
     type:"dual",
     ageText:a=> a<(2/12) ? "2개월 미만 금기" : (a>=6 && a<=11) ? "1정 bid" : (a>=3 && a<=5) ? "1/2정 bid" : "정보없음",
-    weightText:w=> `${round2(w*0.075)}정 bid (TMP ${round2(w*6)}mg/d)`
+    weightText:w=> `${round2(w*0.0375)}정 bid (TMP ${round2(w*6)}mg/d, SMX ${round2(w*30)}mg/d)`
   }
 ].sort((a,b)=>collator.compare(a.name,b.name));
 
@@ -1586,8 +1586,8 @@ const MODE2_RESULT_HINTS = {
   "리나치올시럽5%": "13-18Y : 250-500mg(5-10mL) tid-qid\n\n6-12Y : 250mg(5mL) tid\n\n2-5Y : 1일 250-500mg(5-10mL) 4회분할",
   "헤브론시럽": "15Y↑ : 100mg(5mL) tid\n\n4-14Y : 100mg(5mL) bid\n\n2-3Y : 50mg(2.5mL) tid",
   "엘도스시럽": "30kg↑ : 10mL bid\n\n20-30kg : 5mL tid\n\n15-19kg : 5mL bid",
-  "보령메이액트세립": "(0.03-0.06)g/kg tid (1회 최대 2g)",
-  "셉트린정": "체중기준: TMP 6mg/kg bid (0.075정/kg bid)\n\n6-11Y : 1정 bid\n\n3-5Y : 1/2정 bid\n\n2개월 미만 금기",
+  "보령메이액트세립": "(0.03-0.06)g/kg tid, 최대 2g tid(최대 6g/d)",
+  "셉트린정": "체중기준(1일량): TMP 6mg/kg + SMX 30mg/kg → 1일 2회 분할 (0.0375정/kg/dose)\n\n6-11Y : 1정 bid\n\n3-5Y : 1/2정 bid\n\n2개월 미만 금기",
   "후로스판액": "소아 : 10mL bid (연령·증상에 따라 증감)"
 };
 
@@ -2733,10 +2733,11 @@ function getMode2NameCellHtml(name) {
     const urlRoxol = "https://www.health.kr/searchDrug/result_drug.asp?drug_cd=2018020100029";
     return `<a class="med-link" href="${escapeAttr(urlConitop)}" target="_blank" rel="noopener noreferrer">코니톱시럽(tid)</a>(=<a class="med-link" href="${escapeAttr(urlAmbrocol)}" target="_blank" rel="noopener noreferrer">암브로콜</a> <a class="med-link" href="${escapeAttr(urlRoxol)}" target="_blank" rel="noopener noreferrer">록솔씨</a>)`;
   }
+  const displayName = name === "뮤테란과립200" ? `${name}mg` : name;
   const link = MODE2_HEALTH_KR_URLS[name] || "";
   return link
-    ? `<a class="med-link" href="${escapeAttr(link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(name)}</a>`
-    : `<span class="med-name-text">${escapeHtml(name)}</span>`;
+    ? `<a class="med-link" href="${escapeAttr(link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(displayName)}</a>`
+    : `<span class="med-name-text">${escapeHtml(displayName)}</span>`;
 }
 
 
