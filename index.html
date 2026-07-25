@@ -335,38 +335,50 @@ th{background:#f8fafc;text-align:left;font-size:16px}
   max-width:100px;
 }
 .mode2-fixed120{
-  width:120px;
-  min-width:120px;
-  max-width:120px;
+  width:210px;
+  min-width:210px;
+  max-width:210px;
 }
 #mode2Weight,
-#mode2BirthYymmdd{
+#mode2BirthYymmdd,
+#mode3Weight,
+#mode3BirthYymmdd{
   width:100px !important;
   min-width:100px;
   max-width:100px;
 }
-#mode2AgeDirect{
+#mode2AgeDirect,
+#mode3AgeDirect{
   width:100px !important;
   min-width:100px;
   max-width:100px;
 }
 .mode2-fixed110{
-  width:110px;
-  min-width:110px;
-  max-width:110px;
+  width:210px;
+  min-width:210px;
+  max-width:210px;
 }
 .mode2-age-direct-box{
   margin-left:-5px;
 }
-#mode2AgeValue{
+#mode2AgeValue,
+#mode3AgeValue{
   width:90px;
   min-width:90px;
   max-width:90px;
 }
 .mode2-input-box{
+  display:flex;
+  align-items:center;
+  gap:8px;
   border:1px solid var(--line);
   border-radius:10px;
   padding:8px 10px 10px;
+}
+.mode2-input-box label{
+  margin-bottom:0;
+  white-space:nowrap;
+  flex-shrink:0;
 }
 .mode2-input-weight{
   background:#eaf4ff;
@@ -739,6 +751,9 @@ input[type="checkbox"]{
     margin-left:0;
   }
   .mode2-input-box{
+    flex-direction:column;
+    align-items:stretch;
+    gap:0;
     padding:4px 5px 6px;
     border-radius:8px;
   }
@@ -1340,7 +1355,7 @@ input[type="checkbox"]{
 
   <footer class="app-footer">
     <div>본 도구는 내부 검토 보조용이며 최종 전문적 판단은 약사에게 있습니다.</div>
-    <div class="build-meta">만든이: 나현진 약사 | 만든 날짜: 2026-07-22</div>
+    <div class="build-meta">만든이: 나현진 약사 | 만든 날짜: 2026-07-25</div>
   </footer>
 
   <script>
@@ -1425,7 +1440,15 @@ const MODE2_RULES = [
     const dailyMg = round2(w * 0.25);
     const dailyTab = round2(dailyMg / 5);
     return `${singleTab}정 bid, ${singleMg}mg bid (${dailyTab}정/d, ${dailyMg}mg/d)`;
-  } }
+  } },
+  { name:"엘도스시럽", type:"text", calc:w=> w>=30?"10ml bid":w>=20?"5ml tid":w>=15?"5ml bid":"정보없음" },
+  { name:"보령메이액트세립", type:"range", unit:"g", freq:"tid", dur:"", min:w=>Math.min(round2(w*0.03),2), max:w=>Math.min(round2(w*0.06),2) },
+  {
+    name:"셉트린정",
+    type:"dual",
+    ageText:a=> a<(2/12) ? "2개월 미만 금기" : (a>=6 && a<=11) ? "1정 bid" : (a>=3 && a<=5) ? "1/2정 bid" : "정보없음",
+    weightText:w=> `${round2(w*0.075)}정 bid (TMP ${round2(w*6)}mg/d)`
+  }
 ].sort((a,b)=>collator.compare(a.name,b.name));
 
 const MODE3_RULES = [
@@ -1454,10 +1477,14 @@ const MODE3_RULES = [
   { name:"푸마티펜정", calc:a=> a>=10?"1정 bid (필요시 2정 bid)":a>=3?"1정 bid":"투여정보없음" },
   { name:"듀락칸이지시럽", calc:a=> a>=7?"처음 2~3일간 15mL/d, 그 후 10mL/d":a>=1?"5~10mL/d":"5mL/d" },
   { name:"포리부틴드라이", calc:a=> a>=5?"10ml tid":a>=1?"5ml tid":a>=0.5?"5ml bid":"2.5ml bid-tid" },
-  { name:"포타겔현탁액", calc:a=> a>=12?"성인으로간주 20ml tid":a>=2?"3일간 13.3-20ml tid → 이후 4일간 13.3ml tid":"사용금기" },
+  { name:"포타겔현탁액", calc:a=> a>=19?"성인 용량: 20ml tid":"19세 미만 소아 금기 (복용하지 않음)" },
   { name:"프리비투스 현탁액", calc:a=> a>=15?"5ml tid":a>=7?"5ml bid":a>=4?"3ml bid":a>=2?"2ml bid":"투여정보없음" },
   { name:"노테몬패취", calc:a=> a>=9?"2mg":a>=3?"1mg":a>=0.5?"0.5mg":"투여정보x" },
-  { name:"루키오 / 싱귤레어", calc:a=> a>=15?"10mg 정제 qd":a>=6?"5mg 츄정 qd":a>=2?"4mg 츄정 qd /\n4mg 세립제 qd":a>=0.5?"4mg 세립제 qd":"투여정보없음" }
+  { name:"루키오 / 싱귤레어", calc:a=> a>=15?"10mg 정제 qd":a>=6?"5mg 츄정 qd":a>=2?"4mg 츄정 qd /\n4mg 세립제 qd":a>=0.5?"4mg 세립제 qd":"투여정보없음" },
+  { name:"리나치올시럽", calc:a=> a<(24/12)?"24개월 미만 금기":(a>=6 && a<=12)?"250mg(12.5mL) tid":(a>=2)?"1일 250-500mg(12.5-25mL) 4회분할":"정보없음" },
+  { name:"리나치올시럽5%", calc:a=> a>=13?"250-500mg(5-10mL) tid-qid":a>=6?"250mg(5mL) tid":a>=2?"1일 250-500mg(5-10mL) 4회분할":"정보없음" },
+  { name:"헤브론시럽", calc:a=> a>=15?"100mg(5mL) tid":a>=4?"100mg(5mL) bid":a>=2?"50mg(2.5mL) tid":"정보없음" },
+  { name:"후로스판액", calc:a=> "10mL bid" }
 ].sort((a,b)=>collator.compare(a.name,b.name));
 
 const MERGED_MODE2_RULES = [
@@ -1507,7 +1534,14 @@ const MODE_COMPOSITION_HINTS = {
   "프리비투스 현탁액": "Levocloperastine fendizoate\n7.08 mg / mL",
   "어린이부루펜시럽": "Ibuprofen\n20 mg / mL",
   "한미플루현탁용분말": "Oseltamivir phosphate\n함량 정보: DB",
-  "세토펜정325": "Acetaminophen\n325 mg / tab"
+  "세토펜정325": "Acetaminophen\n325 mg / tab",
+  "리나치올시럽": "Carbocysteine\n20 mg / mL (2%)",
+  "리나치올시럽5%": "Carbocysteine\n50 mg / mL (5%)",
+  "헤브론시럽": "Ivy leaf 70% Ethanol Fluid Ext.\n20 mg / mL",
+  "엘도스시럽": "Erdosteine\n70 mg / g (3.5% 현탁액)",
+  "보령메이액트세립": "Cefditoren Pivoxil\n100 mg / g",
+  "셉트린정": "Sulfamethoxazole 400mg + Trimethoprim 80mg / tab",
+  "후로스판액": "Phloroglucinol Hydrate\n8 mg / mL"
 };
 
 const MODE2_RESULT_HINTS = {
@@ -1537,7 +1571,7 @@ const MODE2_RESULT_HINTS = {
   "두드리진시럽(=이치리진)": "불안, 소양\n6세 이상: 25-50ml/d\n6세 미만: 25ml/d\n\n진정보조\n0.3ml/kg",
   "타미플루캡슐": "40kg- : 75mg bid\n\n23-40kg : 60mg bid\n\n15-23kg : 45mg bid\n\n-15kg : 30mg bid",
   "포리부틴드라이": "5Y- : 10ml tid\n\n1-5Y : 5ml tid\n\n0.5-1Y : 5ml bid\n\n-0.5Y : 2.5ml bid-tid",
-  "포타겔현탁액": "3일 동안 13.3ml-20ml(2-3g) tid\n\n이후 4일 동안 13.3ml(2g) tid",
+  "포타겔현탁액": "19세 미만 소아: 복용 금지\n\n19세 이상(성인): 20ml tid",
   "프리비투스 현탁액": "15Y↑ : 5ml tid\n7-15Y : 5ml bid\n4-7Y : 3ml bid\n2-4Y : 2ml bid",
   "푸마티펜정": "3Y- : 1정 bid\n\n0.5-3Y : (초기)하루 0.05정/kg ~5일, (유지)하루 0.1정/kg",
   "프리마란정5": "40kg↑: 10mg/d\n\n40kg↓: 0.25mg/kg/d",
@@ -1547,7 +1581,14 @@ const MODE2_RESULT_HINTS = {
   "움카민시럽": "12Y↑: 9mL tid\n\n6~12Y : 6mL tid\n\n1~6Y : 3mL tid",
   "노테몬패취": "9Y- : 2mg \n\n3-9Y : 1mg \n\n0.5-3Y : 0.5mg",
   "툴로부테롤패치": "9Y- : 2mg\n3-9Y : 1mg\n0.5-3Y : 0.5mg",
-  "듀락칸이지시럽": "7-14Y : 15ml/d 2-3일간 →그 후 10ml/d \n\n1-6Y : 5-10ml/d \n\n-1Y : 5ml/d"
+  "듀락칸이지시럽": "7-14Y : 15ml/d 2-3일간 →그 후 10ml/d \n\n1-6Y : 5-10ml/d \n\n-1Y : 5ml/d",
+  "리나치올시럽": "6-12Y : 250mg(12.5mL) tid\n\n2-5Y : 1일 250-500mg(12.5-25mL) 4회분할\n\n24개월 미만 금기",
+  "리나치올시럽5%": "13-18Y : 250-500mg(5-10mL) tid-qid\n\n6-12Y : 250mg(5mL) tid\n\n2-5Y : 1일 250-500mg(5-10mL) 4회분할",
+  "헤브론시럽": "15Y↑ : 100mg(5mL) tid\n\n4-14Y : 100mg(5mL) bid\n\n2-3Y : 50mg(2.5mL) tid",
+  "엘도스시럽": "30kg↑ : 10mL bid\n\n20-30kg : 5mL tid\n\n15-19kg : 5mL bid",
+  "보령메이액트세립": "(0.03-0.06)g/kg tid (1회 최대 2g)",
+  "셉트린정": "체중기준: TMP 6mg/kg bid (0.075정/kg bid)\n\n6-11Y : 1정 bid\n\n3-5Y : 1/2정 bid\n\n2개월 미만 금기",
+  "후로스판액": "소아 : 10mL bid (연령·증상에 따라 증감)"
 };
 
 const MODE2_HEALTH_KR_URLS = {
@@ -1587,7 +1628,14 @@ const MODE2_HEALTH_KR_URLS = {
   "어린이부루펜시럽": "https://www.health.kr/searchDrug/result_drug.asp?drug_cd=A11A0500A0154",
   "한미플루현탁용분말": "https://www.health.kr/searchDrug/result_drug.asp?drug_cd=2018092000014",
   "루키오 / 싱귤레어": "https://www.health.kr/searchDrug/result_drug.asp?drug_cd=2016053100032",
-  "노테몬패취": "https://www.health.kr/searchDrug/result_drug.asp?drug_cd=2010050400011"
+  "노테몬패취": "https://www.health.kr/searchDrug/result_drug.asp?drug_cd=2010050400011",
+  "리나치올시럽": "https://health.kr/searchDrug/result_drug.asp?drug_cd=A11A3060A0162",
+  "리나치올시럽5%": "https://health.kr/searchDrug/result_drug.asp?drug_cd=A11A3060A0211",
+  "헤브론시럽": "https://health.kr/searchDrug/result_drug.asp?drug_cd=A11AOOOOO0915",
+  "엘도스시럽": "https://health.kr/searchDrug/result_drug.asp?drug_cd=A11ABBBBB2036",
+  "보령메이액트세립": "https://health.kr/searchDrug/result_drug.asp?drug_cd=A11ABBBBB1234",
+  "셉트린정": "https://health.kr/searchDrug/result_drug.asp?drug_cd=A11A0500A0065",
+  "후로스판액": "https://health.kr/searchDrug/result_drug.asp?drug_cd=A11AJJJJJ0115"
 };
 
 const MODE1_TO_MODE2_TOOLTIP_NAME = {
@@ -2070,13 +2118,17 @@ function renderMode2Results() {
       hasWeightSelected = true;
       hasAgeSelected = true;
 
+      const isAnxietyPair = (m.name === "두드리진시럽(=이치리진)" || m.name === "아디팜정");
+      const ageLabel = isAnxietyPair ? "불안, 소양" : "나이기준";
+      const weightLabel = isAnxietyPair ? "진정보조" : "체중기준";
+
       const ageLine = (age === null || age < 0)
-        ? "불안, 소양: 나이 입력 필요"
-        : `불안, 소양: ${m.ageText(age)}`;
+        ? `${ageLabel}: 나이 입력 필요`
+        : `${ageLabel}: ${m.ageText(age)}`;
       const weightLine = (weight === null || weight <= 0)
-        ? "진정보조: 몸무게 입력 필요"
-        : `진정보조: ${m.weightText(weight)}`;
-      const separator = (m.name === "두드리진시럽(=이치리진)" || m.name === "아디팜정") ? "\n" : "\n\n";
+        ? `${weightLabel}: 몸무게 입력 필요`
+        : `${weightLabel}: ${m.weightText(weight)}`;
+      const separator = isAnxietyPair ? "\n" : "\n\n";
       const dualText = formatMode2TextForViewport(m.name, `${ageLine}${separator}${weightLine}`);
 
       const hasMissing = (age === null || age < 0 || weight === null || weight <= 0);
@@ -2108,7 +2160,7 @@ function renderMode2Results() {
     }
 
     hasAgeSelected = true;
-    const ageForRule = (m.name === "액티피드시럽" || m.name === "뮤테란과립200" || m.name === "페니라민정") ? agePrecise : age;
+    const ageForRule = (m.name === "액티피드시럽" || m.name === "뮤테란과립200" || m.name === "페니라민정" || m.name === "리나치올시럽") ? agePrecise : age;
     if (ageForRule === null || ageForRule < 0) {
       cell.className = "row-result warn";
       cell.textContent = "나이 입력 필요";
@@ -2282,7 +2334,7 @@ function auditMode3Weight(rule, ctx) {
 }
 
 function auditMode3Age(rule, ctx) {
-  const ruleAge = (rule.name === "액티피드시럽" || rule.name === "뮤테란과립200" || rule.name === "페니라민정") ? ctx.agePrecise : ctx.age;
+  const ruleAge = (rule.name === "액티피드시럽" || rule.name === "뮤테란과립200" || rule.name === "페니라민정" || rule.name === "리나치올시럽") ? ctx.agePrecise : ctx.age;
   const recommendation = rule.calc(ruleAge);
   return auditTextAgeRule(rule, recommendation, ctx);
 }
@@ -2334,7 +2386,7 @@ function auditTextAgeRule(rule, recommendation, ctx) {
   if (/금기|복용하지 말것|사용되지 않아야/.test(recommendation)) {
     return { status: "ex", text: "금기" };
   }
-  if (rule.name === "뮤테란과립200" || rule.name === "포타겔현탁액" || rule.name === "듀락칸이지시럽" || rule.name === "루키오 / 싱귤레어") {
+  if (rule.name === "뮤테란과립200" || rule.name === "듀락칸이지시럽" || rule.name === "루키오 / 싱귤레어") {
     return { status: "warn", text: "기준 여러개 / 확인 필요" };
   }
   return auditTextExpectation(recommendation, ctx.dose, ctx.freq, getMode3Unit(rule), rule.name);
@@ -2488,7 +2540,13 @@ function getMode3Unit(rule) {
     "아디팜정": "정",
     "두드리진시럽(=이치리진)": "ml",
     "코니톱시럽(bid)(=암브로콜 록솔씨)": "ml",
-    "코니톱시럽(tid)(=암브로콜 록솔씨)": "ml"
+    "코니톱시럽(tid)(=암브로콜 록솔씨)": "ml",
+    "리나치올시럽": "ml",
+    "리나치올시럽5%": "ml",
+    "헤브론시럽": "ml",
+    "엘도스시럽": "ml",
+    "셉트린정": "정",
+    "후로스판액": "ml"
   };
   return unitMap[rule.name] || "-";
 }

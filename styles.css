@@ -328,38 +328,50 @@ th{background:#f8fafc;text-align:left;font-size:16px}
   max-width:100px;
 }
 .mode2-fixed120{
-  width:120px;
-  min-width:120px;
-  max-width:120px;
+  width:210px;
+  min-width:210px;
+  max-width:210px;
 }
 #mode2Weight,
-#mode2BirthYymmdd{
+#mode2BirthYymmdd,
+#mode3Weight,
+#mode3BirthYymmdd{
   width:100px !important;
   min-width:100px;
   max-width:100px;
 }
-#mode2AgeDirect{
+#mode2AgeDirect,
+#mode3AgeDirect{
   width:100px !important;
   min-width:100px;
   max-width:100px;
 }
 .mode2-fixed110{
-  width:110px;
-  min-width:110px;
-  max-width:110px;
+  width:210px;
+  min-width:210px;
+  max-width:210px;
 }
 .mode2-age-direct-box{
   margin-left:-5px;
 }
-#mode2AgeValue{
+#mode2AgeValue,
+#mode3AgeValue{
   width:90px;
   min-width:90px;
   max-width:90px;
 }
 .mode2-input-box{
+  display:flex;
+  align-items:center;
+  gap:8px;
   border:1px solid var(--line);
   border-radius:10px;
   padding:8px 10px 10px;
+}
+.mode2-input-box label{
+  margin-bottom:0;
+  white-space:nowrap;
+  flex-shrink:0;
 }
 .mode2-input-weight{
   background:#eaf4ff;
@@ -732,6 +744,9 @@ input[type="checkbox"]{
     margin-left:0;
   }
   .mode2-input-box{
+    flex-direction:column;
+    align-items:stretch;
+    gap:0;
     padding:4px 5px 6px;
     border-radius:8px;
   }
