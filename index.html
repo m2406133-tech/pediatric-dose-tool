@@ -1355,7 +1355,7 @@ input[type="checkbox"]{
 
   <footer class="app-footer">
     <div>본 도구는 내부 검토 보조용이며 최종 전문적 판단은 약사에게 있습니다.</div>
-    <div class="build-meta">만든이: 나현진 약사 | 만든 날짜: 2026-07-25</div>
+    <div class="build-meta">만든이: 나현진 약사 | 만든 날짜: 2026-07-30</div>
   </footer>
 
   <script>
@@ -1449,6 +1449,12 @@ const MODE2_RULES = [
     type:"dual",
     ageText:a=> a<(2/12) ? "2개월 미만 금기" : (a>=6 && a<=11) ? "1정 bid" : (a>=3 && a<=5) ? "1/2정 bid" : "정보없음",
     weightText:w=> `${round2(w*0.0375)}정 bid (TMP ${round2(w*6)}mg/d, SMX ${round2(w*30)}mg/d)`
+  },
+  {
+    name:"하이드라섹산10mg",
+    type:"dual",
+    ageText:a=> a<0.25 ? "3개월 미만 금기" : a>=12 ? "만 12세 이상 소아용법 없음" : "3개월~12세 투여 가능",
+    weightText:w=> `${round2(Math.min(w*1.5,100))}mg tid (${round2(Math.min(w*0.15,10))}포, 1일 ${round2(Math.min(w*4.5,300))}mg, 상한 ${round2(w*6)}mg/d)`
   }
 ].sort((a,b)=>collator.compare(a.name,b.name));
 
@@ -1477,7 +1483,8 @@ const MODE3_RULES = [
   { name:"이텐시럽", calc:a=> a>=10?"5mg bid, 필요시 10mL bid":a>=3?"5mL bid":a>=0.5?"2.5mL bid":"투여x" },
   { name:"푸마티펜정", calc:a=> a>=10?"1정 bid (필요시 2정 bid)":a>=3?"1정 bid":"투여정보없음" },
   { name:"듀락칸이지시럽", calc:a=> a>=7?"처음 2~3일간 15mL/d, 그 후 10mL/d":a>=1?"5~10mL/d":"5mL/d" },
-  { name:"포리부틴드라이", calc:a=> a>=5?"10ml tid":a>=1?"5ml tid":a>=0.5?"5ml bid":"2.5ml bid-tid" },
+  { name:"포리부틴드라이시럽", calc:a=> a>=5?"10ml tid":a>=1?"5ml tid":a>=0.5?"5ml bid":"2.5ml bid-tid" },
+  { name:"포리부틴정", calc:a=> a>=15?"1~2정 tid (100-200mg tid, 라벨 성인용량)":a>=5?"0.62정 tid (62.4mg, 약 1/2정)":a>=1?"0.31정 tid (31.2mg, 분할불가→드라이시럽)":a>=0.5?"0.31정 bid (31.2mg, 분할불가→드라이시럽)":"0.16정 bid-tid (15.6mg, →드라이시럽)" },
   { name:"포타겔현탁액", calc:a=> a>=19?"성인 용량: 20ml tid":"19세 미만 소아 금기 (복용하지 않음)" },
   { name:"프리비투스 현탁액", calc:a=> a>=15?"5ml tid":a>=7?"5ml bid":a>=4?"3ml bid":a>=2?"2ml bid":"투여정보없음" },
   { name:"노테몬패취", calc:a=> a>=9?"2mg":a>=3?"1mg":a>=0.5?"0.5mg":"투여정보x" },
@@ -1523,7 +1530,9 @@ const MODE_COMPOSITION_HINTS = {
   "소아용프리마란시럽": "Mequitazine\n500 μg / mL",
   "노테몬패취": "Tulobuterol",
   "씨잘액": "Levocetirizine\n0.5 mg / mL",
-  "포리부틴드라이": "Trimebutine maleate\n7.87 mg / g (4.8 mg/mL)",
+  "포리부틴드라이시럽": "Trimebutine\n7.87 mg / g (4.8 mg/mL)",
+  "포리부틴정": "Trimebutine maleate\n100 mg / tab (Trimebutine 76.95 mg)",
+  "하이드라섹산10mg": "Racecadotril\n10 mg / g (10 mg / 포)",
   "씨투스건조시럽": "Pranlukast\n100 mg / g",
   "포타겔현탁액": "Dioctahedral smectite\n150 mg / mL",
   "아디팜정": "Hydroxyzine HCl\n10 mg / tab",
@@ -1571,7 +1580,9 @@ const MODE2_RESULT_HINTS = {
   "클래리건조시럽": "(0.3- 0.6)ml/kg bid",
   "두드리진시럽(=이치리진)": "불안, 소양\n6세 이상: 25-50ml/d\n6세 미만: 25ml/d\n\n진정보조\n0.3ml/kg",
   "타미플루캡슐": "40kg- : 75mg bid\n\n23-40kg : 60mg bid\n\n15-23kg : 45mg bid\n\n-15kg : 30mg bid",
-  "포리부틴드라이": "5Y- : 10ml tid\n\n1-5Y : 5ml tid\n\n0.5-1Y : 5ml bid\n\n-0.5Y : 2.5ml bid-tid",
+  "포리부틴드라이시럽": "5Y- : 10ml tid\n\n1-5Y : 5ml tid\n\n0.5-1Y : 5ml bid\n\n-0.5Y : 2.5ml bid-tid",
+  "포리부틴정": "성인: 트리메부틴말레산염으로서 1회 100-200mg 1일 3회 식전\n\n[소아용량은 라벨에 없음 - 드라이시럽 환산]\n정제는 트리메부틴말레산염, 드라이시럽은 트리메부틴(유리염기) 표기\n말레산염 → 염기 환산계수 0.7695 (387.47/503.54)\n1정 = 말레산염 100mg = 트리메부틴 76.95mg = 드라이시럽 16.0mL\n\n5Y↑ : 10mL tid → 0.62정 tid\n1-5Y : 5mL tid → 0.31정 tid\n0.5-1Y : 5mL bid → 0.31정 bid\n-0.5Y : 2.5mL bid-tid → 0.16정 bid-tid\n\n1/2정 미만은 분할 부정확 → 드라이시럽 권장",
+  "하이드라섹산10mg": "3개월 이상 ~ 만 12세 미만\n경구용 수분보급제와 함께 투여\n\n1회 1.5mg/kg, 1일 3회 일정 간격\n1일 최대 6mg/kg, 1주 최대 42mg/kg\n1회 최대 100mg\n\n정상 배변 2회까지 투여\n5일 이상 지속시 의사 조언\n7일 초과 금지, 장기투여 비권장\n3개월 미만 금기",
   "포타겔현탁액": "19세 미만 소아: 복용 금지\n\n19세 이상(성인): 20ml tid",
   "프리비투스 현탁액": "15Y↑ : 5ml tid\n7-15Y : 5ml bid\n4-7Y : 3ml bid\n2-4Y : 2ml bid",
   "푸마티펜정": "3Y- : 1정 bid\n\n0.5-3Y : (초기)하루 0.05정/kg ~5일, (유지)하루 0.1정/kg",
@@ -1617,7 +1628,7 @@ const MODE2_HEALTH_KR_URLS = {
   "타미플루캡슐": "https://www.health.kr/searchDrug/result_drug.asp?drug_cd=A11AGGGGA5141",
   "소아용프리마란시럽": "https://www.health.kr/searchDrug/result_drug.asp?drug_cd=A11A1310A0163",
   "씨잘액": "https://www.health.kr/searchDrug/result_drug.asp?drug_cd=A11APPPPP0967",
-  "포리부틴드라이": "https://www.health.kr/searchDrug/result_drug.asp?drug_cd=A11A0500A0120",
+  "포리부틴드라이시럽": "https://www.health.kr/searchDrug/result_drug.asp?drug_cd=A11A0500A0120",
   "씨투스건조시럽": "https://www.health.kr/searchDrug/result_drug.asp?drug_cd=2010080200004",
   "포타겔현탁액": "https://www.health.kr/searchDrug/result_drug.asp?drug_cd=2019102400021",
   "아디팜정": "https://www.health.kr/searchDrug/result_drug.asp?drug_cd=A11AFFFFF0070",
@@ -2307,6 +2318,8 @@ function auditMode3Dual(rule, ctx) {
     ? { status: "warn", text: "체중 기준 확인" }
     : auditTextExpectation(rule.weightText(ctx.weight), ctx.dose, ctx.freq, getMode3Unit(rule), rule.name);
 
+  if (ageAudit.text === "금기") return { status: "ex", text: "금기 (나이기준)" };
+
   if (ageAudit.status === "ok") return { status: "ok", text: `적정 (나이기준)` };
   if (weightAudit.status === "ok") return { status: "ok", text: `적정 (체중기준)` };
 
@@ -2537,7 +2550,9 @@ function getMode3Unit(rule) {
     "이텐시럽": "ml",
     "푸마티펜정": "정",
     "듀락칸이지시럽": "ml",
-    "포리부틴드라이": "ml",
+    "포리부틴드라이시럽": "ml",
+    "포리부틴정": "정",
+    "하이드라섹산10mg": "포",
     "포타겔현탁액": "ml",
     "프리비투스 현탁액": "ml",
     "노테몬패취": "mg",
@@ -2559,6 +2574,7 @@ function getMode3Unit(rule) {
 
 function normalizeMode3Dose(rule, dose) {
   if (rule.name === "뮤테란과립200") return dose * 200;
+  if (rule.name === "하이드라섹산10mg") return dose * 10;
   return dose;
 }
 
