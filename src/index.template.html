@@ -18,19 +18,16 @@ __INLINE_CSS__
           <button class="tab" data-mode="mode2" title="몸무게/나이 기준 약 용량 계산">모드2</button>
           <button class="tab" data-mode="mode3" title="처방 입력값 감사">모드3</button>
         </div>
-        <div id="modeHelp" class="mode-help"></div>
+        <div id="modeHelp" class="mode-help"><span id="modeTitle" class="mode-title"></span><span id="modeDesc"></span></div>
       </div>
     </div>
     <div class="actions">
-      <button id="btn-reset-checks" class="primary">체크 해제</button>
-      <button id="btn-reset-inputs">입력값 초기화</button>
-      <button id="btn-reset-mode">현재 모드 초기화</button>
+      <button id="btn-reset-all" class="primary" title="모든 모드의 입력값과 약품 선택을 지웁니다">초기화</button>
     </div>
   </header>
 
   <main class="wrap">
     <section id="mode1" class="mode active panel">
-      <h2>모드1 (용량 입력 → 몸무게 추정)</h2>
       <div class="mode1-grid">
         <div>
           <table class="dense" id="mode1Table">
@@ -60,7 +57,6 @@ __INLINE_CSS__
     </section>
 
     <section id="mode2" class="mode panel">
-      <h2>모드2 (몸무게/나이 입력 → 용량 계산)</h2>
       <div id="mode2StickyInput" class="sticky-input-area">
         <div class="inline-row merged-top-row">
           <div class="field mode2-input-box mode2-input-weight mode2-fixed120">
@@ -102,7 +98,6 @@ __INLINE_CSS__
     </section>
 
     <section id="mode3" class="mode panel">
-      <h2>모드3 (처방 입력 → 감사)</h2>
       <div id="mode3StickyInput" class="sticky-input-area">
         <div class="inline-row merged-top-row">
           <div class="field mode2-input-box mode2-input-weight mode2-fixed120">

@@ -333,22 +333,11 @@ function init() {
 }
 
 function bindTopControls() {
-  document.getElementById("btn-reset-checks").addEventListener("click", () => {
-    state.selected.mode1.clear();
-    state.selected.mode2.clear();
-    renderAllModeTables();
-    renderMode();
-  });
-
-  document.getElementById("btn-reset-inputs").addEventListener("click", () => {
-    clearModeInputs(state.activeMode);
-    renderAllModeTables();
-    renderMode();
-  });
-
-  document.getElementById("btn-reset-mode").addEventListener("click", () => {
-    clearModeInputs(state.activeMode);
-    state.selected[state.activeMode].clear();
+  document.getElementById("btn-reset-all").addEventListener("click", () => {
+    ["mode1", "mode2", "mode3"].forEach(mode => {
+      clearModeInputs(mode);
+      state.selected[mode].clear();
+    });
     renderAllModeTables();
     renderMode();
   });
@@ -387,11 +376,13 @@ function renderMode() {
   document.querySelectorAll(".mode").forEach(sec => sec.classList.toggle("active", sec.id === state.activeMode));
 
   const help = {
-    mode1: "선택 약품별 추정 범위 계산후, 최종 몸무게 범위를 표시합니다.",
-    mode2: "몸무게 기준 약품과 나이 기준 약품을 한 화면에서 함께 계산합니다.",
-    mode3: "입력된 처방 용량과 횟수를 몸무게/나이 기준으로 감사합니다."
+    mode1: ["용량 입력 → 몸무게 추정", "선택 약품별 추정 범위 계산후, 최종 몸무게 범위를 표시합니다."],
+    mode2: ["몸무게/나이 입력 → 용량 계산", "몸무게 기준 약품과 나이 기준 약품을 한 화면에서 계산합니다."],
+    mode3: ["처방 입력 → 감사", "입력된 처방 용량과 횟수를 몸무게/나이 기준으로 감사합니다."]
   };
-  document.getElementById("modeHelp").textContent = help[state.activeMode];
+  const [helpTitle, helpDesc] = help[state.activeMode];
+  document.getElementById("modeTitle").textContent = helpTitle;
+  document.getElementById("modeDesc").textContent = helpDesc;
 
   const mode2Weight = document.getElementById("mode2Weight");
   if (mode2Weight) mode2Weight.value = state.mode2Weight;
